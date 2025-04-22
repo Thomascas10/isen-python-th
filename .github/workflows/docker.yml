@@ -37,19 +37,17 @@ jobs:
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
           image-ref: ${{ vars.DOCKERHUB_USERNAME }}/mon-app:dev-${{ github.sha }}
-          severity: 'HIGH,CRITICAL'
-          ignore-unfixed: true
-          format: 'table'
-          exit-code: '0'  # ne fait pas échouer le job
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          continue-on-error: true
       
 
-      - name: Log in to Docker Hub (required to pull image)
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
-        
-      - name: Scan image with Trivy (only HIGH and CRITICAL)
-        run: |
-          IMAGE=${{ vars.DOCKERHUB_USERNAME }}/mon-app:dev-${{ github.sha }}
-          trivy image --severity HIGH,CRITICAL --no-progress $IMAGE
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
         
         
 

@@ -21,3 +21,29 @@ jobs:
         run: |
           docker push ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }}
 
+  scan-container:
+    name: Scan Container Image with Trivy
+    runs-on: ubuntu-latest
+    needs: docker   # ← dépend du build
+    continue-on-error: true # ← n'échoue pas même s'il y a des vulnérabilités
+        
+    steps:
+      - uses: actions/checkout@v4
+        
+      - name: Install Trivy
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.51.1_Linux-64bit.deb
+          sudo dpkg -i trivy_0.51.1_Linux-64bit.deb
+        
+      - name: Log in to Docker Hub (required to pull image)
+        run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ vars.DOCKER_USERNAME }}" --password-stdin
+        
+      - name: Scan image with Trivy (only HIGH and CRITICAL)
+        run: |
+          IMAGE=${{ vars.DOCKER_USERNAME }}/mon-app:dev-${{ github.sha }}
+          trivy image --severity HIGH,CRITICAL --no-progress $IMAGE
+        
+        
+
+

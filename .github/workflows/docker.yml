@@ -61,14 +61,14 @@ jobs:
         uses: anchore/sbom-action@v0.15.8
         with:
           source: dir:.
-          output-file: sbom.syft.json
+          output-file: sbom
           format: syft-json
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:
           name: sbom
-          path: sbom.syft.json
+          path: sbom
 
         
         

@@ -48,6 +48,27 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+    
+  sbom:
+    name: Generate SBOM with Syft
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0.15.8
+        with:
+          path: "dir:."
+          output-file: "sbom.syft.json"
+          format: "syft-json"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.syft.json
+
         
         
 

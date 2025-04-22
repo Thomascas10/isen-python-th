@@ -36,7 +36,7 @@ jobs:
       - name: Scan image with Trivy
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
-          image-ref: ${{ vars.DOCKERHUB_USERNAME }}/mon-app:dev-${{ github.sha }}
+          image-ref: ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }}
           format: 'template'
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'

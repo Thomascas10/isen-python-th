@@ -55,20 +55,25 @@ jobs:
     needs: docker
 
     steps:
-      - uses: actions/checkout@v4
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Generate SBOM
-        uses: anchore/sbom-action@v0.15.8
-        with:
-          source: dir:.
-          output-file: sbom
-          format: syft-json
+        - name: Generate SBOM from project directory
+          uses: anchore/sbom-action@v0
+          with:
+            source: dir:.
+            format: syft-json
+            output-file: sbom.syft.json
 
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom
+
+        - name: Upload SBOM files
+          uses: actions/upload-artifact@v4
+          with:
+            name: sbom-files
+            path: |
+              sbom.syft.json
+              sbom.cyclonedx.json
+            retention-days: 90
 
         
         

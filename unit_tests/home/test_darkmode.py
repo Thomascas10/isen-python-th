@@ -8,7 +8,7 @@ class DarkModeTest(TestCase):
     def test_homepage_contains_darkmode_toggle(self):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, '🌓 DARK MODE')
+        self.assertContains(response, 'id="darkModeToggle"')
 
     def test_homepage_contains_darkmode_script(self):
         response = self.client.get(reverse('home'))

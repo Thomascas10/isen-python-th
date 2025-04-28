@@ -23,8 +23,9 @@ jobs:
           sleep 10   
 
       - name: Run ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.10.0
+        uses: zaproxy/action-baseline@v0.14.0
         with:
+            token: ${{ secrets.DOCKERHUB_TOKEN }}
             target: 'http://localhost:8080'
             cmd_options: '-maxDuration 60 -config scanner.attackOnStart=true -config view.locale=fr'
             fail_action: true

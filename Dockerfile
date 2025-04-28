@@ -1,7 +1,6 @@
 # hadolint global ignore=DL3008
-FROM debian:12-slim AS build 
+FROM debian:12-slim AS build
 
-# hadolint ignore=DL3008
 RUN apt-get update && \
     apt-get install --no-install-suggests --no-install-recommends --yes python3-venv gcc libpython3-dev && \
     python3 -m venv /venv && \
@@ -25,4 +24,5 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+ENTRYPOINT ["/venv/bin/python"]
+CMD [ "manage.py", "runserver", "0.0.0.0:8080"]

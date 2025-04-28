@@ -27,15 +27,12 @@ jobs:
         with:
             token: ${{ secrets.DOCKERHUB_TOKEN }}
             target: 'http://localhost:8080'
-            cmd_options: '-maxDuration 60 -config scanner.attackOnStart=true -config view.locale=fr'
+            cmd_options: '-config scanner.attackOnStart=true -config view.locale=fr'
             fail_action: true
-            artifact_name: zap-scan-report
   
       - name: Upload ZAP Reports
         uses: actions/upload-artifact@v4
         with:
             name: zap-scan-report
             path: |
-              report_json.json
-              report_md.md
-              report_html.html
+              zap_scan

@@ -31,6 +31,9 @@ jobs:
         run: |
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ vars.DOCKERHUB_USERNAME }}" --password-stdin
+
       - name: Pull image from Docker Hub
         run: |
           docker pull ${{ vars.DOCKERHUB_USERNAME }}/python-app:latest

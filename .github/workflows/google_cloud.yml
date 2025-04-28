@@ -36,11 +36,11 @@ jobs:
 
       - name: Pull image from Docker Hub
         run: |
-          docker pull ${{ vars.DOCKERHUB_USERNAME }}/python-app:latest
-  
+          docker pull ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }}  
+
       - name: Tag Docker image for Artifact Registry
         run: |
-          docker tag ${{ vars.DOCKERHUB_USERNAME }}/python-app:latest ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:latest
+          docker tag ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
   
       - name: Push Docker image to Artifact Registry
         run: |

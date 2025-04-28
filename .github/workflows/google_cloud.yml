@@ -1,0 +1,50 @@
+name: Configure Docker for Artifact Registry
+
+on:
+  workflow_run:
+    workflows: ["Docker"] 
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  configure-docker:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }} 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
+
+      - name: Set up gcloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          install_components: 'docker-credential-gcr'
+
+      - name: Configure Docker to authenticate to Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Pull image from Docker Hub
+        run: |
+          docker pull ${{ vars.DOCKERHUB_USERNAME }}/python-app:latest
+  
+      - name: Tag Docker image for Artifact Registry
+        run: |
+          docker tag ${{ vars.DOCKERHUB_USERNAME }}/python-app:latest ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:latest
+  
+      - name: Push Docker image to Artifact Registry
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
+  
+          
+    env:
+      REGION: europe-west1
+      GCP_PROJECT_ID: isen-python-th    # <-- Ton vrai ID projet GCP
+      ARTIFACT_REPOSITORY: isen-python-repository      # Remplace "europe" par ton vrai région Artifact Registry (ex: us, europe, asia...)

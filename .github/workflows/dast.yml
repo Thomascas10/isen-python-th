@@ -19,17 +19,13 @@ jobs:
       - name: Build and run app in Docker
         run: |
           docker build -t ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} .
-          docker run -d -p 8080:8080 ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} .
+          docker run -d -p 8080:8080 ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} 
           sleep 10   
 
       - name: Run ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.14.0
         with:
-            token: ${{ secrets.DOCKERHUB_TOKEN }}
             target: 'http://localhost:8080'
-            output: 'zap_scan.json'
-            format: 'json'
-            cmd_options: '-config scanner.attackOnStart=true -config view.locale=fr'
             fail_action: true
   
       - name: Upload ZAP Reports

@@ -40,17 +40,23 @@ jobs:
 
       - name: Tag Docker image for Artifact Registry
         run: |
-          docker tag ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
+          docker tag ${{ vars.DOCKERHUB_USERNAME }}/myapp:dev-${{ github.sha }} ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:vpython-app:v${{ github.run_number }}
+
   
       - name: Push Docker image to Artifact Registry
         run: |
-          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:vpython-app:v${{ github.run_number }}
 
+      
+      - name: Force gcloud config to correct region
+        run: |
+          gcloud config set run/region ${{ env.REGION }}
+  
       - name: Deploy to Google Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: python-app
-          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:vpython-app:v${{ github.run_number }}
           allow_unauthenticated: true
           max_instances: 1
           min_instances: 0

@@ -25,15 +25,16 @@ jobs:
       - name: Run ZAP Baseline Scan
         uses: zaproxy/action-baseline@v0.10.0
         with:
-          target: 'http://localhost:8080'
-          time: '1'             # 1 minute de scan
-          fail_action: false    # Ne pas échouer tout le job si ZAP trouve des vulnérabilités
-          cmd_options: '-config scanner.attackOnStart=true -config view.locale=fr'
-          allow_issue_warnings: true
-          rules_file_name: ''
-
-      - name: Upload ZAP Report
+            target: 'http://localhost:8080'
+            cmd_options: '-maxDuration 60 -config scanner.attackOnStart=true -config view.locale=fr'
+            fail_action: true
+            artifact_name: zap-scan-report
+  
+      - name: Upload ZAP Reports
         uses: actions/upload-artifact@v4
         with:
-          name: zap-report
-          path: report_json.json
+            name: zap-scan-report
+            path: |
+              report_json.json
+              report_md.md
+              report_html.html

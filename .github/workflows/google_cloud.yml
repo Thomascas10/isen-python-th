@@ -45,6 +45,16 @@ jobs:
       - name: Push Docker image to Artifact Registry
         run: |
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
+
+      - name: Deploy to Google Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: python-app
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REPOSITORY }}/python-app:v2
+          allow_unauthenticated: true
+          max_instances: 1
+          min_instances: 0
+          memory: 512Mi
   
           
     env:
